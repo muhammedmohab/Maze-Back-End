@@ -19,6 +19,21 @@ const paymentCtrl = {
 
             const {cart, paymentID, address} = req.body;
 
+            //Handle cart quantity bought!
+            cart.forEach( async(item) =>{
+                try{
+                    const productQuanitiy = item.quantity;
+                    let newStock = await Products.findById(item._id);
+                    newStock = newStock.stock - productQuanitiy;
+                    await Products.findOneAndUpdate({_id: item._id}, {
+                        stock: newStock
+                    })
+
+                }catch(err){
+                    console.log(err);
+                }
+            })
+
             const {_id, name, email} = user;
 
             const newPayment = new Payments({
